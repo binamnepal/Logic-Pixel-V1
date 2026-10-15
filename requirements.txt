@@ -1,0 +1,9 @@
+django>=5.0
+psycopg[binary]>=3.1
+dj-database-url
+python-dotenv
+requests
+django-q2
+cryptography
+gunicorn
+whitenoise
