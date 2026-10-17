@@ -23,6 +23,8 @@ def notify_staff(business, contact, reason: str, trigger: str = "handover"):
 
     if business.telegram_chat_id:
         log("telegram", telegram.send(business.telegram_chat_id, text))
-    if business.staff_email:
+
+    emails = business.get_staff_emails()
+    if emails:
         subject = f"[{business.name}] {contact.get_status_display()}: {contact.name or contact.wa_phone}"
-        log("email", email_channel.send(business.staff_email, subject, text))
+        log("email", email_channel.send(emails, subject, text))

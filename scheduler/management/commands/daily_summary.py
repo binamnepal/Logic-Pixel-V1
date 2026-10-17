@@ -20,6 +20,7 @@ class Command(BaseCommand):
                     f"Consultation ready: {ready}\nHandovers waiting for staff: {waiting}")
             if b.telegram_chat_id:
                 telegram.send(b.telegram_chat_id, text)
-            if b.staff_email:
-                email_channel.send(b.staff_email, f"[{b.name}] Daily summary", text)
+            emails = b.get_staff_emails()
+            if emails:
+                email_channel.send(emails, f"[{b.name}] Daily summary", text)
             self.stdout.write(text)
