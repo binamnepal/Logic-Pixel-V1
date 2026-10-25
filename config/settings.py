@@ -36,6 +36,12 @@ TEMPLATES = [{
         "django.contrib.messages.context_processors.messages",
     ]},
 }]
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+}
 WSGI_APPLICATION = "config.wsgi.application"
 
 _db_url = os.getenv("DATABASE_URL", "").strip()
