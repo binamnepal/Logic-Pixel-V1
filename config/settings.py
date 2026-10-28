@@ -8,8 +8,11 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.getenv("DEBUG", "0") == "1"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
-CSRF_TRUSTED_ORIGINS = [o for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o]
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "*").split(",") if h.strip()]
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
+
+# Render terminates HTTPS at its proxy; without this, admin login/CSRF can break
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
@@ -46,7 +49,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 _db_url = os.getenv("DATABASE_URL", "").strip()
 if _db_url:
-   DATABASES = {"default": dj_database_url.parse(_db_url, conn_max_age=60, conn_health_checks=True)}
+    DATABASES = {"default": dj_database_url.parse(_db_url, conn_max_age=60, conn_health_checks=True)}
 else:
     DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "db.sqlite3"}}
 
@@ -76,4 +79,5 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     DEFAULT_FROM_EMAIL = "bot@localhost"
 
-Q_CLUSTER = {"name": "bot", "workers": 2, "timeout": 180, "retry": 200, "orm": "default"}
+# Free Render tier has 512 MB RAM, so one worker
+Q_CLUSTER = {"name": "bot", "workers": 1, "timeout": 180, "retry": 200, "orm": "default"}
